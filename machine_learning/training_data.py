@@ -1,87 +1,67 @@
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath("../data_processing"))
-
-import tweet_processing as tp
-
-import pandas as pd  
+import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from pprint import pprint
-from bs4 import BeautifulSoup
-import re
+
+from sklearn.cross_validation import train_test_split
+
+from tqdm import tqdm
+tqdm.pandas(desc="progress-bar")
+import gensim
+from gensim.models.word2vec import Word2Vec
+from gensim.models.doc2vec import TaggedDocument
+import multiprocessing
+from sklearn import utils
+
+csv = 'training_data/clean_tweet.csv'
+print("Loading data")
+data = pd.read_csv(csv, index_col=0)
+print("Data loaded")
+
+data.dropna(inplace=True)
+data.reset_index(drop=True,inplace=True)
+
+x = data.text
+y = data.target
+
+SEED = 200
+x_train, x_validation_and_test, y_train, y_validation_and_test = train_test_split(x, y, test_size=.02, random_state=SEED)
+x_validation, x_test, y_validation, y_test = train_test_split(x_validation_and_test, y_validation_and_test, test_size=.5, random_state=SEED)
 
 """
-cols = ['sentiment','id','date','query_string','user','text']
-data = pd.read_csv("./training_data/training.1600000.processed.noemoticon.csv",header=None, names=cols, encoding="utf-8")
-
-#drop useless column
-data.drop(['id', 'date', 'query_string', 'user'], axis=1, inplace=True)
-
-#add a column to check the text len before cleaning
-data['pre_clean_len'] = [len(t) for t in data.text]
-
-#ceate a dictionary for the data
-data_dict = {
-        'sentiment':{
-            'type':data.sentiment.dtype,
-            'description':'sentiment class - 0:negative, 1:positive'
-        },
-        'text':{
-            'type':data.text.dtype,
-            'description':'tweet text'
-        },
-        'pre_clean_len':{
-            'type':data.pre_clean_len.dtype,
-            'description':'Length of the tweet before cleaning'
-        },
-        'dataset_shape':data.shape
-}
-
-nums = [0, 400000, 800000, 1200000, 1600000]
-print("Cleaning and parsing the tweets...\n")
-clean_tweet_texts = []
-for i in range(nums[0], nums[4]):
-    if ((i+1)%10000 == 0):
-        print("Tweets %d of %d has been processed" % (i+1, nums[4]))
-
-    clean_tweet_texts.append(tp.clean_tweet(data['text'][i]))
-
-clean_data = pd.DataFrame(clean_tweet_texts, columns=['text'])
-clean_data['target'] = data.sentiment
-
-clean_data.to_csv('clean_tweet.csv', encoding='utf-8')
-"""
-csv = 'clean_tweet.csv'
-
-my_data = pd.read_csv(csv, index_col = 0)
-"""
-my_data.dropna(inplace=True)
-my_data.reset_index(drop=True, inplace=True)
-my_data.to_csv('clean_tweet.csv', encoding='utf-8')
-print(my_data.info())
-"""
-#pprint(data_dict)
-
-"""
-(fig, ax) = plt.subplots(figsize=(5,5))
-plt.boxplot(data.pre_clean_len)
-plt.show()
+print("Train set has total {0} entries with {1:.2f}% negative, {2:.2f}% positive".format(len(x_train), (len(x_train[y_train == 0]) / (len(x_train)*1.))*100, (len(x_train[y_train == 4]) / (len(x_train)*1.))*100))
+print("Validation set has total {0} entries with {1:.2f}% negative, {2:.2f}% positive".format(len(x_validation), (len(x_validation[y_validation == 0]) / (len(x_validation)*1.))*100, (len(x_validation[y_validation == 4]) / (len(x_validation)*1.))*100))
+print("Test set has total {0} entries with {1:.2f}% negative, {2:.2f}% positive".format(len(x_test), (len(x_test[y_test == 0]) / (len(x_test)*1.))*100, (len(x_test[y_test == 4]) / (len(x_test)*1.))*100))
 """
 
-#print(data.text[279])
-#print(BeautifulSoup(data.text[279], 'lxml').get_text())
+def labelize_tweets_ug(tweets,label):
+    result = []
+    prefix = label
+    for i, t in zip(tweets.index, tweets):
+        result.append(TaggedDocument(t.split(), [prefix + '_%s' % i]))
+    return result
 
-#print(data.text[343])
-#print(re.sub(r'@[A-Za-z0-9]+', '', data.text[343]))
+all_x = pd.concat([x_train,x_validation,x_test])
+all_x_w2v = labelize_tweets_ug(all_x, 'all')
 
-#print(data['pre_clean_len'])
-#print(data.head(10))
-#num = int(input("enter a number:"))
+cores = multiprocessing.cpu_count()
+model_ug_cbow = Word2Vec(sg=0, size=100, negative=5, window=2, min_count=2, workers=cores, alpha=0.065, min_alpha=0.065)
+model_ug_cbow.build_vocab([x.words for x in tqdm(all_x_w2v)])
 
-#print(data.text[num])
-#s = tp.clean_tweet(data.text[num])
-#for c in s:
-#    print(ord(c))
-#print(s)
+#%%time
+for epoch in range(30):
+    model_ug_cbow.train(utils.shuffle([x.words for x in tqdm(all_x_w2v)]), total_examples=len(all_x_w2v), epochs=1)
+    model_ug_cbow.alpha -= 0.002
+    model_ug_cbow.min_alpha = model_ug_cbow.alpha
+
+
+model_ug_sg = Word2Vec(sg=1, size=100, negative=5, window=2, min_count=2, workers=cores, alpha=0.065, min_alpha=0.065)
+model_ug_sg.build_vocab([x.words for x in tqdm(all_x_w2v)])
+
+#%%time
+for epoch in range(30):
+    model_ug_sg.train(utils.shuffle([x.words for x in tqdm(all_x_w2v)]), total_examples=len(all_x_w2v), epochs=1)
+    model_ug_sg.alpha -= 0.002
+    model_ug_sg.min_alpha = model_ug_sg.alpha
+
+
+model_ug_cbow.save('training_data/w2v_model_ug_cbow.word2vec')
+model_ug_sg.save('training_data/w2v_model_ug_sg.word2vec')
