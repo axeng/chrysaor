@@ -1,17 +1,18 @@
 from keras.models import load_model
-from gensim.models.word2vec import Word2Vec
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
 import pickle
 
+"""
 import sys
 import os
 
 sys.path.insert(0, os.path.abspath("../data_processing"))
 
 import tweet_processing as tp
+"""
 
 loaded_CNN_model = load_model('CNN_best_weights.01-0.8292.hdf5')
 
