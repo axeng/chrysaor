@@ -5,18 +5,11 @@ from keras.preprocessing.sequence import pad_sequences
 
 import pickle
 
-"""
-import sys
-import os
+import data_processing.tweet_processing as tp
 
-sys.path.insert(0, os.path.abspath("../data_processing"))
+loaded_CNN_model = load_model('machine_learning/CNN_best_weights.01-0.8292.hdf5')
 
-import tweet_processing as tp
-"""
-
-loaded_CNN_model = load_model('CNN_best_weights.01-0.8292.hdf5')
-
-handle = open('tokenizer.pickle', 'rb')
+handle = open('machine_learning/tokenizer.pickle', 'rb')
 tokenizer = pickle.load(handle)
 
 def eval(tweet):
