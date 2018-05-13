@@ -21,9 +21,10 @@ def eval(tweet):
 	x_val_seq = pad_sequences(sequences_val, maxlen=45)
 
 	return round(loaded_CNN_model.predict(x_val_seq)[0][0])
-
+"""
 print(eval("this week is not going as had hoped"))
 print(eval("sad that the feet of my macbook just fell off"))
 print(eval("another commenting contest yay"))
 print(eval("i want to cry a lot"))
 print(eval("My dad just gave me this new object, I'm so happy rn"))
+"""
