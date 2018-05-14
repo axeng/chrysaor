@@ -6,11 +6,8 @@ api = twitter.Api(consumer_key='zphUX92wy7r8iw5xMiWVIMAxn',
   access_token_secret='SpjLStwyRWGCw5z4czj4FXCtzPA3UftnrNQ6Q7YUtRCmn')
 
 def returnBtcTweets() :
-    search = api.GetSearch("bitcoin", lang='en', count=3, result_type='mixed')
+    search = api.GetSearch("bitcoin", lang='en', count=100, result_type='mixed')
     top_100_tweets = []
     for t in search :
         top_100_tweets.append(t.text)
     return top_100_tweets
-
-
-print(returnBtcTweets())
