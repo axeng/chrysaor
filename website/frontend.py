@@ -10,9 +10,17 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from datetime import datetime
 
+
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath("../"))
+
+import master_file as mf
+
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 @app.route('/')
 def home():
-    return render_template('test.html')
+    return render_template('test.html', prediction=mf.predict())
