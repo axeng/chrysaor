@@ -13,6 +13,13 @@ import twitter_api.top_crypto_tweets as ml
 import requests, json
 
 #Returns one week in advance predicted value off of current market climate
+def btcPrice() :
+    url = 'https://rest.coinapi.io/v1/exchangerate/BTC/USD'
+    headers = {'X-CoinAPI-Key' : 'E8A5467E-9F0B-4A0E-80C3-8B7FA803E822'}
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    val = int(data['rate'])
+    return val
 def algo() :
     # Gets Bitcoin price
     url = 'https://rest.coinapi.io/v1/exchangerate/BTC/USD'
