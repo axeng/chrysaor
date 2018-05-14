@@ -1,6 +1,6 @@
 # chrysaor
 
-Rafael Rivas - Nicholas Cerda - Axen Georget
+Rafael Rivas - Nicholas Cerda - Axen Georget  
 CST205
 Team 16
 
@@ -9,17 +9,17 @@ Spring 2018 - 05/14/2018
 GitHub: https://github.com/axkod/chrysaor
 
 ## Libraries
-First pip install the following:
-flask, python-twitter, nltk, bs4, keras,
-tensorflow, sklearn, gensim, tqdm
+First pip install the following:  
+flask, python-twitter, nltk, bs4, keras,  
+tensorflow, sklearn, gensim, tqdm  
 
 ## How to run program
-Windows:
-$env:FLASK_APP = "frontend.py"
-flask run
-Mac:
-export FLASK_APP=frontend.py
-flask run
+Windows:  
+$env:FLASK_APP = "frontend.py"  
+flask run  
+Mac:  
+export FLASK_APP=frontend.py  
+flask run  
 
 ## Future Work
 
