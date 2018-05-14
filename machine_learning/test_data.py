@@ -1,3 +1,10 @@
+"""
+Author: Axen Georget
+Date: 05/13/2018
+Professor: Avner Biblarz
+Title: test_data.py
+Abstract: file with some test about the training data, just a test purpose not a real interest
+"""
 import sys
 import os
 

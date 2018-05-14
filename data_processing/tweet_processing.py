@@ -1,3 +1,10 @@
+"""
+Author: Axen Georget
+Date: 05/13/2018
+Professor: Avner Biblarz
+Title: tweet_processing.py
+Abstract: file containing the tweet processing functions
+"""
 from bs4 import BeautifulSoup
 import re
 from nltk.tokenize import WordPunctTokenizer
@@ -23,8 +30,10 @@ negations_dic = {
                     "mustn't":"must not"
                 }
 
+#Create the negation pattern
 neg_pattern = re.compile(r'\b(' + '|'.join(negations_dic.keys()) + r')\b')
 
+#Clean a tweet
 def clean_tweet(tweet):
     #transform html
     text = BeautifulSoup(tweet, 'lxml').get_text()
