@@ -1,3 +1,13 @@
+"""
+Author: Rafael Rivas
+Date: 05/13/2018
+Professor: Avner Biblarz
+Title: top_crypto_tweets.py
+Abstract: Recieves 100 tweets from twitter in english that are popular and recent. Then compiles them into a lsit 
+to be passed into the ml-eval function.
+"""
+
+
 import twitter
 
 api = twitter.Api(consumer_key='zphUX92wy7r8iw5xMiWVIMAxn',
