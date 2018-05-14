@@ -1,4 +1,4 @@
-# chrysaor
+# Chrysaor
 
 Rafael Rivas - Nicholas Cerda - Axen Georget  
 CST205
