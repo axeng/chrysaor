@@ -8,8 +8,18 @@ Spring 2018 - 05/14/2018
 
 GitHub: https://github.com/axkod/chrysaor
 
+## Libraries
+First pip install the following:
+flask, python-twitter, nltk, bs4, keras,
+tensorflow, sklearn, gensim, tqdm
+
 ## How to run program
-TODO
+Windows:
+$env:FLASK_APP = "frontend.py"
+flask run
+Mac:
+export FLASK_APP=frontend.py
+flask run
 
 ## Future Work
 
